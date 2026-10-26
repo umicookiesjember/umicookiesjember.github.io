@@ -1,0 +1,15 @@
+{
+  "name": "E-Katalog Kue Tart - Umi Cookies Jember",
+  "short_name": "Umi Katalog",
+  "description": "Katalog pribadi koleksi kue tart Umi Cookies Jember",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf8f6",
+  "theme_color": "#b86470",
+  "orientation": "any",
+  "icons": [
+    {"src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

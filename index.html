@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#b86470">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Umi Katalog">
+  <meta name="description" content="E-Katalog kue tart pribadi Umi Cookies Jember">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon-192.png">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <title>E-Katalog Umi Cookies Jember</title>
+  <style>
+    *{box-sizing:border-box}html,body{height:100%;width:100%;margin:0;font:14px system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:#faf8f6;color:#30292b}
+    .bar{height:54px;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 14px;background:#fff;border-bottom:1px solid #ebe3df}
+    .title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.small{font-weight:400;font-size:11px;color:#8d8380}
+    .tools{display:flex;gap:7px}.btn{border:1px solid #e7dbd8;background:#fff;border-radius:999px;padding:8px 12px;color:#30292b;text-decoration:none;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer}
+    .primary{background:#b86470;border-color:#b86470;color:#fff}.hide{display:none!important}
+    iframe{border:0;width:100%;height:calc(100dvh - 54px);display:block;background:#faf8f6}
+    .setup{max-width:560px;margin:15vh auto 0;padding:28px;background:#fff;border:1px solid #ebe3df;border-radius:18px;line-height:1.65}
+    #status{position:fixed;bottom:10px;right:10px;background:rgba(255,255,255,.95);padding:8px 12px;border:1px solid #eee;border-radius:12px;font-size:11px;max-width:245px;box-shadow:0 3px 12px #0000000b}
+    #status a{color:#a64c59;font-weight:700}
+    @media(max-width:430px){.bar{padding:7px 9px}.btn{padding:8px 9px;font-size:11px}.title{font-size:12px}.small{font-size:10px}}
+  </style>
+</head>
+<body>
+<header class="bar"><div class="title">✿ Umi Cookies <div class="small">E-Katalog Pribadi</div></div>
+  <div class="tools"><button class="btn primary hide" id="installBtn" type="button">Pasang Aplikasi</button><a class="btn" id="directBtn" href="#" target="_blank" rel="noopener noreferrer">Buka Langsung</a><a class="btn" id="adminBtn" href="#" target="_blank" rel="noopener noreferrer">⚙ Pengaturan</a></div>
+</header>
+<main id="frameArea"><iframe id="catalogFrame" title="E-Katalog Umi Cookies" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe></main>
+<section id="setup" class="setup hide"><h2>Hubungkan Apps Script terlebih dahulu</h2><p>Di file <code>github/index.html</code>, ganti teks <code>GANTI_DENGAN_URL_APPS_SCRIPT_EXEC</code> dengan URL Web App yang berakhiran <code>/exec</code>. Lalu unggah ulang file ini ke GitHub Pages.</p></section>
+<div id="status" class="hide">Jika galeri tidak tampil, gunakan <a id="directHelp" href="#" target="_blank" rel="noopener noreferrer">Buka Langsung</a>. Jaringan internet diperlukan untuk memuat foto.</div>
+<script>
+'use strict';
+// SATU-SATUNYA BARIS YANG WAJIB DIGANTI SEBELUM UNGGAH KE GITHUB:
+const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzT6ck5gYXM1-MecisHcnk-TyAD_rnv9V19MV9YX7_5EkSYwL42qCicAwlUGRqAo2ykRQ/exec';
+const valid = /^https:\/\/script\.google\.com\/macros\/s\/[a-zA-Z0-9_-]+\/exec$/.test(APP_SCRIPT_URL);
+const $ = id => document.getElementById(id);
+if(valid){
+  $('catalogFrame').src=APP_SCRIPT_URL;
+  $('directBtn').href=APP_SCRIPT_URL;
+  $('directHelp').href=APP_SCRIPT_URL;
+  $('adminBtn').href=APP_SCRIPT_URL+'?admin=1';
+  $('status').classList.remove('hide');
+}else{
+  $('frameArea').classList.add('hide');$('setup').classList.remove('hide');
+  $('adminBtn').classList.add('hide');$('directBtn').classList.add('hide');
+}
+window.addEventListener('online',()=>{$('status').textContent='Koneksi pulih. Muat ulang jika foto belum terlihat.';});
+window.addEventListener('offline',()=>{$('status').textContent='Sedang offline. Foto tidak bisa dimuat sampai internet kembali.';});
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(console.warn));}
+let pendingInstall=null;
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();pendingInstall=event;$('installBtn').classList.remove('hide');});
+$('installBtn').addEventListener('click',async()=>{if(!pendingInstall)return;pendingInstall.prompt();await pendingInstall.userChoice;pendingInstall=null;$('installBtn').classList.add('hide');});
+window.addEventListener('appinstalled',()=>{$('installBtn').classList.add('hide');pendingInstall=null;});
+</script>
+</body>
+</html>
